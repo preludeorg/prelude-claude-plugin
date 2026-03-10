@@ -4,12 +4,46 @@ Official Claude Code plugin for [Prelude Security](https://preludesecurity.com) 
 
 ## Installation
 
+### From the terminal
+
 ```bash
-# Add the marketplace
+# Step 1: Add the marketplace
+claude plugin marketplace add preludeorg/prelude-claude-plugin
+
+# Step 2: Install the plugin
+claude plugin install prelude@prelude-claude-plugin
+```
+
+### From inside Claude Code
+
+```bash
+# Step 1: Add the marketplace
 /plugin marketplace add preludeorg/prelude-claude-plugin
 
-# Install the plugin
+# Step 2: Install the plugin
 /plugin install prelude@prelude-claude-plugin
+```
+
+### Scope options
+
+By default, the plugin installs to **user scope** (available in all projects). You can change this:
+
+```bash
+# Project scope (shared with team via version control)
+claude plugin install prelude@prelude-claude-plugin --scope project
+
+# Local scope (this machine only, gitignored)
+claude plugin install prelude@prelude-claude-plugin --scope local
+```
+
+### Management
+
+```bash
+claude plugin list                                          # List installed plugins
+claude plugin update prelude@prelude-claude-plugin          # Update to latest
+claude plugin disable prelude@prelude-claude-plugin         # Disable without uninstalling
+claude plugin enable prelude@prelude-claude-plugin          # Re-enable
+claude plugin uninstall prelude@prelude-claude-plugin       # Uninstall
 ```
 
 ## Skills
