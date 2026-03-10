@@ -1,0 +1,22 @@
+{
+  "name": "prelude",
+  "description": "Prelude Security platform tools — continuous security testing, posture monitoring, compliance reporting, and partner integrations via the Prelude CLI.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Prelude Security",
+    "email": "support@preludesecurity.com"
+  },
+  "homepage": "https://github.com/preludeorg/prelude-claude-plugin",
+  "repository": "https://github.com/preludeorg/prelude-claude-plugin",
+  "license": "MIT",
+  "keywords": [
+    "security",
+    "cybersecurity",
+    "prelude",
+    "detect",
+    "scm",
+    "nist",
+    "compliance",
+    "cyber-insurance"
+  ]
+}
