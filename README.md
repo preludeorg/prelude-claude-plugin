@@ -29,11 +29,11 @@ claude plugin install prelude@prelude-claude-plugin
 
 | Skill | Description |
 |-------|-------------|
-| `/prelude:detect` | Continuous security testing — manage endpoints, schedule tests, view results, create threats and detections |
-| `/prelude:monitor` | Security posture monitoring — query endpoints/users/inboxes, evaluate policies, manage exceptions, generate reports |
-| `/prelude:connect` | Connect security controls — walk through attaching CrowdStrike, Defender, Intune, Okta, and 20+ other integrations |
-| `/prelude:nist` | NIST CSF 2.0 compliance report — interactive assessment across all 6 functions with PDF output |
-| `/prelude:cyberinsurance` | Cyber insurance readiness report — interactive questionnaire across 12 domains with PDF output |
+| `/detect` | Continuous security testing — manage endpoints, schedule tests, view results, create threats and detections |
+| `/monitor` | Security posture monitoring — query endpoints/users/inboxes, evaluate policies, manage exceptions, generate reports |
+| `/connect` | Connect security controls — walk through attaching CrowdStrike, Defender, Intune, Okta, and 20+ other integrations |
+| `/nist` | NIST CSF 2.0 compliance report — interactive assessment across all 6 functions with PDF output |
+| `/cyberinsurance` | Cyber insurance readiness report — interactive questionnaire across 12 domains with PDF output |
 
 ## Prerequisites
 
