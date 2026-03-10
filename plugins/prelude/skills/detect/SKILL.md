@@ -1,6 +1,6 @@
 ---
 description: Continuous security testing with Prelude Detect — manage endpoints, schedule and run security tests, view activity and results, manage threats, threat hunts, and detection rules. Use when working with Prelude's testing capabilities or the `prelude detect`, `prelude build`, or `prelude generate` commands.
-name: detect
+name: prelude:detect
 ---
 
 # Prelude Detect — Continuous Security Testing

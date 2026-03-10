@@ -1,6 +1,6 @@
 ---
 description: Security posture monitoring with Prelude SCM — query endpoints, users, inboxes, and network devices; evaluate security control policies; manage exceptions; generate reports; and monitor partner integrations. Use when working with Prelude's monitoring capabilities or the `prelude scm` commands.
-name: monitor
+name: prelude:monitor
 ---
 
 # Prelude Monitor — Security Control Monitoring

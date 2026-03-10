@@ -1,6 +1,6 @@
 ---
 description: Generate a NIST Cybersecurity Framework (CSF) 2.0 compliance report — interactively walks through every function, category, and subcategory, collecting evidence and pulling Prelude data where available, then produces a branded PDF report. Use when the user wants to create a NIST CSF assessment, NIST compliance report, or NIST gap analysis.
-name: nist
+name: prelude:nist
 ---
 
 # Prelude NIST CSF 2.0 Report Generator

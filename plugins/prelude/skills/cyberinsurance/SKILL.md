@@ -1,6 +1,6 @@
 ---
 description: Generate a cyber insurance readiness report — interactively walks through standard cyber insurance questionnaire domains, collecting evidence and pulling Prelude data where available, then produces a branded PDF report. Use when the user wants to prepare for a cyber insurance application, renewal, or readiness assessment.
-name: cyberinsurance
+name: prelude:cyberinsurance
 ---
 
 # Prelude Cyber Insurance Readiness Report Generator

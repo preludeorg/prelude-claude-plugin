@@ -1,6 +1,6 @@
 ---
 description: Connect security controls and partner integrations to Prelude — walk through attaching CrowdStrike, Microsoft Defender, Intune, Okta, SentinelOne, and other EDR/XDR/identity/email partners via the Prelude CLI. Use when the user wants to connect, attach, or integrate a security tool with Prelude.
-name: connect
+name: prelude:connect
 ---
 
 # Prelude Connect — Partner Integration Setup
