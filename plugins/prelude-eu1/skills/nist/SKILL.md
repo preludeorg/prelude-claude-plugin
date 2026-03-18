@@ -9,35 +9,35 @@ You are an expert compliance analyst helping users build a comprehensive NIST Cy
 
 ## Tools
 
-This skill can pull evidence from the Prelude platform via MCP tools (primary) or CLI commands (fallback). **Always prefer MCP tools** — they require no local CLI installation and work directly.
+This skill pulls evidence from the Prelude platform via MCP tools.
 
 MCP tools are registered under this plugin's namespace. The exact prefix depends on which environment plugin is installed (e.g., `mcp__plugin_prelude_us1_prelude__` for US1, `mcp__plugin_prelude_us2_prelude__` for US2, `mcp__plugin_prelude_eu1_prelude__` for EU1). Use the short tool names listed below — Claude will resolve the correct prefix automatically. Every MCP tool requires an `account_id` parameter. Use `list_accounts` first to get the user's account ID if not already known.
 
 ### Key MCP Tools for NIST Evidence
 
-| Evidence Type | MCP Tool | CLI Equivalent |
-|---------------|----------|---------------|
-| Account & controls | `get_account` | `prelude iam account` |
-| Endpoint inventory | `scm_list_endpoints` | `prelude scm endpoints` |
-| User inventory & MFA | `scm_list_users` | `prelude scm users` |
-| Inbox inventory | `scm_list_inboxes` | `prelude scm inboxes` |
-| Policy evaluation | `scm_evaluation` | `prelude scm evaluation` |
-| Evaluation summary | `scm_evaluation_summary` | `prelude scm evaluation-summary` |
-| Technique summary | `scm_technique_summary` | `prelude scm technique-summary` |
-| Object exceptions | `scm_list_object_exceptions` | `prelude scm exception object list` |
-| Notifications | `scm_list_notifications` | `prelude scm notification list` |
-| Threat library | `list_threats` | `prelude detect threats` |
-| Activity data | `get_activity` | `prelude detect activity` |
-| Threat hunts | `list_threat_hunts` | `prelude detect threat-hunts` |
-| Endpoints (Detect) | `list_endpoints` | `prelude detect endpoints` |
-| Deploy detection | `partner_block` | `prelude partner block` |
+| Evidence Type | MCP Tool |
+|---------------|----------|
+| Account & controls | `get_account` |
+| Endpoint inventory | `scm_list_endpoints` |
+| User inventory & MFA | `scm_list_users` |
+| Inbox inventory | `scm_list_inboxes` |
+| Policy evaluation | `scm_evaluation` |
+| Evaluation summary | `scm_evaluation_summary` |
+| Technique summary | `scm_technique_summary` |
+| Object exceptions | `scm_list_object_exceptions` |
+| Notifications | `scm_list_notifications` |
+| Threat library | `list_threats` |
+| Activity data | `get_activity` |
+| Threat hunts | `list_threat_hunts` |
+| Endpoints (Detect) | `list_endpoints` |
+| Deploy detection | `partner_block` |
 
 ## How This Works
 
 1. **Interactive walkthrough** — You go through each NIST CSF 2.0 function, category, and subcategory one at a time
 2. **Data collection** — For each subcategory, you help the user provide evidence via:
    - Manual input (descriptions, policies, screenshots)
-   - Prelude platform data (if connected — via `prelude` CLI)
+   - Prelude platform data (if connected — via MCP tools)
    - Third-party tool exports (CSV, API, or MCP)
 3. **Maturity scoring** — Each subcategory gets a maturity rating
 4. **Report generation** — A styled HTML report converted to PDF
@@ -46,11 +46,9 @@ MCP tools are registered under this plugin's namespace. The exact prefix depends
 
 ### Step 1: Check if Prelude is available
 
-**MCP (preferred):** Call `list_accounts`. If it returns accounts, Prelude is connected — you can pull data for many subcategories automatically.
+Call `list_accounts`. If it returns accounts, Prelude is connected — you can pull data for many subcategories automatically.
 
-**CLI (fallback):** Run `prelude --version` and `prelude iam account`.
-
-If neither is available, the report will rely entirely on manual input — which is perfectly fine.
+If Prelude is not available, the report will rely entirely on manual input — which is perfectly fine.
 
 ### Step 2: Set report metadata
 
@@ -114,7 +112,7 @@ Walk through each function in order. For each **subcategory**, do the following:
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
 | GV.RR-01 | Organizational leadership is responsible and accountable for cybersecurity risk | Board charters, CISO reporting structure | — |
-| GV.RR-02 | Roles, responsibilities, and authorities related to cybersecurity risk management are established | Job descriptions, RACI matrix | `get_account` (MCP) or `prelude iam account` (CLI) |
+| GV.RR-02 | Roles, responsibilities, and authorities related to cybersecurity risk management are established | Job descriptions, RACI matrix | `get_account` |
 | GV.RR-03 | Adequate resources are allocated commensurate with the cybersecurity risk strategy | Budget documentation, staffing plans | — |
 | GV.RR-04 | Cybersecurity is included in human resources practices | HR policies, onboarding/offboarding procedures | — |
 
@@ -131,7 +129,7 @@ Walk through each function in order. For each **subcategory**, do the following:
 |----|-------------|----------------------|--------------|
 | GV.OV-01 | Cybersecurity risk management strategy outcomes are reviewed to inform and adjust strategy | Board meeting minutes, strategy reviews | — |
 | GV.OV-02 | The cybersecurity risk management strategy is reviewed and adjusted to ensure coverage | Strategy review documentation | — |
-| GV.OV-03 | Organizational cybersecurity risk management performance is evaluated and reviewed | KPI dashboards, metrics reports | `get_activity` with view="protected" (MCP) or `prelude detect activity --view protected` (CLI) |
+| GV.OV-03 | Organizational cybersecurity risk management performance is evaluated and reviewed | KPI dashboards, metrics reports | `get_activity` with view="protected" |
 
 ### GV.SC — Cybersecurity Supply Chain Risk Management
 
@@ -158,9 +156,9 @@ Walk through each function in order. For each **subcategory**, do the following:
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| ID.AM-01 | Inventories of hardware managed by the organization are maintained | CMDB (ServiceNow, Jamf, Intune) | `scm_list_endpoints` (MCP) or `prelude scm endpoints` (CLI) |
-| ID.AM-02 | Inventories of software, services, and systems are maintained | Software asset management tools | `scm_list_endpoints` (MCP) or `prelude scm endpoints` (CLI) |
-| ID.AM-03 | Representations of authorized network communication and data flows are maintained | Network diagrams, firewall rules | `prelude scm network_devices` (CLI only) |
+| ID.AM-01 | Inventories of hardware managed by the organization are maintained | CMDB (ServiceNow, Jamf, Intune) | `scm_list_endpoints` |
+| ID.AM-02 | Inventories of software, services, and systems are maintained | Software asset management tools | `scm_list_endpoints` |
+| ID.AM-03 | Representations of authorized network communication and data flows are maintained | Network diagrams, firewall rules | — |
 | ID.AM-04 | Inventories of services provided by suppliers are maintained | Vendor/SaaS inventory | — |
 | ID.AM-05 | Assets are prioritized based on classification, criticality, resources, and impact | Asset classification policies | — |
 | ID.AM-07 | Inventories of data and corresponding metadata for designated data types are maintained | Data classification tools, DLP | — |
@@ -170,13 +168,13 @@ Walk through each function in order. For each **subcategory**, do the following:
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| ID.RA-01 | Vulnerabilities in assets are identified, validated, and recorded | Tenable, Qualys, Rapid7 | `scm_evaluation_summary` (MCP) or `prelude scm evaluation-summary` (CLI) |
-| ID.RA-02 | Cyber threat intelligence is received from information sharing forums and sources | Threat intel feeds, ISACs | `list_threats` (MCP) or `prelude detect threats` (CLI) |
-| ID.RA-03 | Internal and external threats are identified and recorded | Threat modeling docs | `get_activity` with view="threats" (MCP) |
+| ID.RA-01 | Vulnerabilities in assets are identified, validated, and recorded | Tenable, Qualys, Rapid7 | `scm_evaluation_summary` |
+| ID.RA-02 | Cyber threat intelligence is received from information sharing forums and sources | Threat intel feeds, ISACs | `list_threats` |
+| ID.RA-03 | Internal and external threats are identified and recorded | Threat modeling docs | `get_activity` with view="threats" |
 | ID.RA-04 | Potential impacts and likelihoods of threats exploiting vulnerabilities are identified | Risk assessments | — |
 | ID.RA-05 | Threats, vulnerabilities, likelihoods, and impacts are used to understand inherent risk | Risk register | — |
 | ID.RA-06 | Risk responses are chosen, prioritized, planned, tracked, and communicated | Risk treatment plans | — |
-| ID.RA-07 | Changes and exceptions are managed, assessed for risk impact | Change management logs | `scm_list_object_exceptions` (MCP) |
+| ID.RA-07 | Changes and exceptions are managed, assessed for risk impact | Change management logs | `scm_list_object_exceptions` |
 | ID.RA-08 | Processes for receiving, analyzing, and responding to vulnerability disclosures are established | VDP/bug bounty program docs | — |
 | ID.RA-09 | Authenticity and integrity of hardware and software are assessed prior to acquisition | Procurement security requirements | — |
 | ID.RA-10 | Critical suppliers are assessed prior to acquisition | Vendor security assessments | — |
@@ -185,8 +183,8 @@ Walk through each function in order. For each **subcategory**, do the following:
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| ID.IM-01 | Improvements are identified from evaluations | Audit findings, assessment reports | `scm_evaluation_summary` (MCP) |
-| ID.IM-02 | Improvements are identified from security tests and exercises | Penetration test reports, tabletop exercises | `get_activity` with view="findings" (MCP) |
+| ID.IM-01 | Improvements are identified from evaluations | Audit findings, assessment reports | `scm_evaluation_summary` |
+| ID.IM-02 | Improvements are identified from security tests and exercises | Penetration test reports, tabletop exercises | `get_activity` with view="findings" |
 | ID.IM-03 | Improvements are identified from execution of operational processes | Process improvement logs | — |
 | ID.IM-04 | Incident response plans are established, communicated, maintained, and improved | IR plan documents, revision history | — |
 
@@ -200,11 +198,11 @@ Walk through each function in order. For each **subcategory**, do the following:
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| PR.AA-01 | Identities and credentials for authorized users, services, and hardware are managed | IAM tools (Okta, Entra, Google Identity) | `scm_list_users` (MCP) |
+| PR.AA-01 | Identities and credentials for authorized users, services, and hardware are managed | IAM tools (Okta, Entra, Google Identity) | `scm_list_users` |
 | PR.AA-02 | Identities are proofed and bound to credentials based on context | Identity proofing procedures | — |
-| PR.AA-03 | Users, services, and hardware are authenticated | MFA policies, authentication configs | `scm_list_users` with filter (MCP) |
+| PR.AA-03 | Users, services, and hardware are authenticated | MFA policies, authentication configs | `scm_list_users` with filter |
 | PR.AA-04 | Identity assertions are protected, conveyed, and verified | SSO/SAML/OIDC configurations | — |
-| PR.AA-05 | Access permissions, entitlements, and authorizations are defined and enforce least privilege | RBAC policies, access reviews | `scm_evaluation` (MCP) |
+| PR.AA-05 | Access permissions, entitlements, and authorizations are defined and enforce least privilege | RBAC policies, access reviews | `scm_evaluation` |
 | PR.AA-06 | Physical access to assets is managed, monitored, and enforced | Physical security logs, badge systems | — |
 
 ### PR.AT — Awareness and Training
@@ -218,7 +216,7 @@ Walk through each function in order. For each **subcategory**, do the following:
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| PR.DS-01 | Confidentiality, integrity, and availability of data-at-rest are protected | Encryption policies, DLP tools | `scm_evaluation` (MCP) |
+| PR.DS-01 | Confidentiality, integrity, and availability of data-at-rest are protected | Encryption policies, DLP tools | `scm_evaluation` |
 | PR.DS-02 | Confidentiality, integrity, and availability of data-in-transit are protected | TLS configs, VPN policies | — |
 | PR.DS-10 | Confidentiality, integrity, and availability of data-in-use are protected | Memory protection, DRM | — |
 | PR.DS-11 | Backups of data are created, protected, maintained, and tested | Backup solution (Veeam, AWS Backup) | — |
@@ -227,18 +225,18 @@ Walk through each function in order. For each **subcategory**, do the following:
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| PR.PS-01 | Configuration management practices are established and applied | CM tools, hardening baselines (CIS) | `scm_evaluation_summary` (MCP) |
-| PR.PS-02 | Software is maintained, replaced, and removed commensurate with risk | Patch management (WSUS, Intune, Jamf) | `scm_evaluation` (MCP) |
+| PR.PS-01 | Configuration management practices are established and applied | CM tools, hardening baselines (CIS) | `scm_evaluation_summary` |
+| PR.PS-02 | Software is maintained, replaced, and removed commensurate with risk | Patch management (WSUS, Intune, Jamf) | `scm_evaluation` |
 | PR.PS-03 | Hardware is maintained, replaced, and removed commensurate with risk | Hardware lifecycle management | — |
-| PR.PS-04 | Log records are generated and made available for continuous monitoring | SIEM (Splunk, Sentinel) | `get_account` (MCP) |
-| PR.PS-05 | Installation and execution of unauthorized software are prevented | Application control policies | `scm_evaluation` (MCP) |
+| PR.PS-04 | Log records are generated and made available for continuous monitoring | SIEM (Splunk, Sentinel) | `get_account` |
+| PR.PS-05 | Installation and execution of unauthorized software are prevented | Application control policies | `scm_evaluation` |
 | PR.PS-06 | Secure software development practices are integrated | SDLC documentation, SAST/DAST tools | — |
 
 ### PR.IR — Technology Infrastructure Resilience
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| PR.IR-01 | Networks and environments are protected from unauthorized logical access | Firewall configs, network segmentation | `prelude scm network_devices` (CLI only) |
+| PR.IR-01 | Networks and environments are protected from unauthorized logical access | Firewall configs, network segmentation | — |
 | PR.IR-02 | Technology assets are protected from environmental threats | Physical security, environmental controls | — |
 | PR.IR-03 | Mechanisms are implemented to achieve resilience requirements | HA/DR configurations, failover tests | — |
 | PR.IR-04 | Adequate resource capacity to ensure availability is maintained | Capacity planning, monitoring | — |
@@ -253,21 +251,21 @@ Walk through each function in order. For each **subcategory**, do the following:
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| DE.CM-01 | Networks and network services are monitored to find potentially adverse events | NDR, IDS/IPS, SIEM | `prelude scm network_devices` (CLI only), `get_activity` with view="logs" (MCP) |
+| DE.CM-01 | Networks and network services are monitored to find potentially adverse events | NDR, IDS/IPS, SIEM | `get_activity` with view="logs" |
 | DE.CM-02 | The physical environment is monitored to find potentially adverse events | Physical security monitoring | — |
-| DE.CM-03 | Personnel activity and technology usage are monitored | UEBA, DLP, endpoint monitoring | `scm_list_users` (MCP), `scm_evaluation` (MCP) |
+| DE.CM-03 | Personnel activity and technology usage are monitored | UEBA, DLP, endpoint monitoring | `scm_list_users`, `scm_evaluation` |
 | DE.CM-06 | External service provider activities and services are monitored | Cloud monitoring, vendor SLA tracking | — |
-| DE.CM-09 | Computing hardware and software are monitored to find potentially adverse events | EDR/XDR, endpoint monitoring | `get_activity` with view="endpoints" (MCP) |
+| DE.CM-09 | Computing hardware and software are monitored to find potentially adverse events | EDR/XDR, endpoint monitoring | `get_activity` with view="endpoints" |
 
 ### DE.AE — Adverse Event Analysis
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| DE.AE-02 | Potentially adverse events are analyzed to better understand associated activities | SIEM correlation, SOC procedures | `get_activity` with view="findings" (MCP) |
-| DE.AE-03 | Information is correlated from multiple sources | SIEM, SOAR platforms | `get_activity` with view="techniques" (MCP) |
+| DE.AE-02 | Potentially adverse events are analyzed to better understand associated activities | SIEM correlation, SOC procedures | `get_activity` with view="findings" |
+| DE.AE-03 | Information is correlated from multiple sources | SIEM, SOAR platforms | `get_activity` with view="techniques" |
 | DE.AE-04 | Estimated impact and scope of adverse events are understood | Incident triage procedures | — |
-| DE.AE-06 | Information on adverse events is provided to authorized staff and tools | Alert routing, notification rules | `scm_list_notifications` (MCP) |
-| DE.AE-07 | Cyber threat intelligence is integrated into the analysis | CTI platforms, threat feeds | `list_threats` and `list_threat_hunts` (MCP) |
+| DE.AE-06 | Information on adverse events is provided to authorized staff and tools | Alert routing, notification rules | `scm_list_notifications` |
+| DE.AE-07 | Cyber threat intelligence is integrated into the analysis | CTI platforms, threat feeds | `list_threats` and `list_threat_hunts` |
 | DE.AE-08 | Incidents are declared when adverse events meet defined incident criteria | Incident declaration criteria | — |
 
 ---
@@ -290,7 +288,7 @@ Walk through each function in order. For each **subcategory**, do the following:
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| RS.AN-03 | Analysis is performed to establish root cause | RCA templates, forensic tools | `threat_hunt_activity` (MCP) |
+| RS.AN-03 | Analysis is performed to establish root cause | RCA templates, forensic tools | `threat_hunt_activity` |
 | RS.AN-06 | Investigation actions are recorded with integrity preserved | Chain of custody logs, case management | — |
 | RS.AN-07 | Incident data and metadata are collected with integrity preserved | Evidence collection procedures, forensic imaging | — |
 | RS.AN-08 | Incident magnitude is estimated and validated | Impact assessment procedures | — |
@@ -306,7 +304,7 @@ Walk through each function in order. For each **subcategory**, do the following:
 
 | ID | Subcategory | Suggested Data Sources | Prelude Data |
 |----|-------------|----------------------|--------------|
-| RS.MI-01 | Incidents are contained | Containment procedures, network isolation | `partner_block` (MCP) |
+| RS.MI-01 | Incidents are contained | Containment procedures, network isolation | `partner_block` |
 | RS.MI-02 | Incidents are eradicated | Eradication procedures, remediation steps | — |
 
 ---
@@ -343,7 +341,7 @@ Walk through each function in order. For each **subcategory**, do the following:
 2. **Suggest**: List relevant data sources and tools
 3. **Prelude check**: If Prelude is connected and the "Prelude Data" column lists an MCP tool, offer to pull it:
    - "I can pull data from your Prelude platform for this. Want me to query `<tool>`?"
-   - If yes, call the MCP tool (or run the CLI command as fallback), summarize the findings, and propose how it maps to this subcategory
+   - If yes, call the MCP tool, summarize the findings, and propose how it maps to this subcategory
 4. **External data**: If the user mentions another tool, guide them on how to provide the data:
    - **CSV export**: "Export from [tool] and share the file path — I'll read and summarize it"
    - **API**: "If you have an API endpoint, I can fetch data via curl"
@@ -401,7 +399,7 @@ The report should include:
    - Each subcategory with: evidence summary, maturity tier, gaps, recommendations
 5. **Gap analysis** — All subcategories scored below Tier 2, prioritized by risk
 6. **Recommendations** — Top 10 prioritized improvements
-7. **Appendix** — Data sources used, Prelude commands run, methodology
+7. **Appendix** — Data sources used, MCP tools queried, methodology
 
 ### Step 2: Convert to PDF
 

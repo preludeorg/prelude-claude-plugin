@@ -9,29 +9,28 @@ You are an expert cyber insurance analyst helping users build a comprehensive cy
 
 ## Tools
 
-This skill can pull evidence from the Prelude platform via MCP tools (primary) or CLI commands (fallback). **Always prefer MCP tools** — they require no local CLI installation and work directly.
+This skill pulls evidence from the Prelude platform via MCP tools.
 
 MCP tools are registered under this plugin's namespace. The exact prefix depends on which environment plugin is installed (e.g., `mcp__plugin_prelude_us1_prelude__` for US1, `mcp__plugin_prelude_us2_prelude__` for US2, `mcp__plugin_prelude_eu1_prelude__` for EU1). Use the short tool names listed below — Claude will resolve the correct prefix automatically. Every MCP tool requires an `account_id` parameter. Use `list_accounts` first to get the user's account ID if not already known.
 
 ### Key MCP Tools for Insurance Evidence
 
-| Evidence Type | MCP Tool | CLI Equivalent |
-|---------------|----------|---------------|
-| Account & controls | `get_account` | `prelude iam account` |
-| Endpoint inventory | `scm_list_endpoints` | `prelude scm endpoints` |
-| User inventory & MFA | `scm_list_users` | `prelude scm users` |
-| Inbox inventory | `scm_list_inboxes` | `prelude scm inboxes` |
-| Policy evaluation | `scm_evaluation` | `prelude scm evaluation` |
-| Evaluation summary | `scm_evaluation_summary` | `prelude scm evaluation-summary` |
-| Activity data | `get_activity` | `prelude detect activity` |
-| Network devices | N/A (CLI only) | `prelude scm network_devices` |
+| Evidence Type | MCP Tool |
+|---------------|----------|
+| Account & controls | `get_account` |
+| Endpoint inventory | `scm_list_endpoints` |
+| User inventory & MFA | `scm_list_users` |
+| Inbox inventory | `scm_list_inboxes` |
+| Policy evaluation | `scm_evaluation` |
+| Evaluation summary | `scm_evaluation_summary` |
+| Activity data | `get_activity` |
 
 ## How This Works
 
 1. **Interactive walkthrough** — You go through each insurance questionnaire domain and question one at a time
 2. **Data collection** — For each question, you help the user provide evidence via:
    - Manual input (descriptions, policies, documentation)
-   - Prelude platform data (if connected — via `prelude` CLI)
+   - Prelude platform data (if connected — via MCP tools)
    - Third-party tool exports (CSV, API, or MCP)
 3. **Readiness scoring** — Each domain gets a readiness rating
 4. **Report generation** — A styled HTML report converted to PDF
@@ -40,11 +39,9 @@ MCP tools are registered under this plugin's namespace. The exact prefix depends
 
 ### Step 1: Check if Prelude is available
 
-**MCP (preferred):** Call `list_accounts`. If it returns accounts, Prelude is connected — you can pull data for many domains automatically.
+Call `list_accounts`. If it returns accounts, Prelude is connected — you can pull data for many domains automatically.
 
-**CLI (fallback):** Run `prelude --version` and `prelude iam account`.
-
-If neither is available, the report will rely entirely on manual input.
+If Prelude is not available, the report will rely entirely on manual input.
 
 ### Step 2: Set report metadata
 
@@ -64,11 +61,11 @@ Ask the user for:
 
 | # | Question | Prelude Data |
 |---|----------|--------------|
-| 1.1 | What EDR/XDR solution(s) are deployed? | `get_account` (MCP) — lists connected controls |
-| 1.2 | What percentage of endpoints have EDR agents installed? | `scm_evaluation_summary` (MCP) — endpoint coverage |
-| 1.3 | Are all EDR agents on the latest version? | `scm_list_endpoints` (MCP) — agent version data |
-| 1.4 | Is EDR configured with recommended prevention policies? | `scm_evaluation` (MCP) — policy compliance |
-| 1.5 | Are there unmanaged or rogue endpoints? | `scm_list_endpoints` with filter (MCP) |
+| 1.1 | What EDR/XDR solution(s) are deployed? | `get_account` — lists connected controls |
+| 1.2 | What percentage of endpoints have EDR agents installed? | `scm_evaluation_summary` — endpoint coverage |
+| 1.3 | Are all EDR agents on the latest version? | `scm_list_endpoints` — agent version data |
+| 1.4 | Is EDR configured with recommended prevention policies? | `scm_evaluation` — policy compliance |
+| 1.5 | Are there unmanaged or rogue endpoints? | `scm_list_endpoints` with filter |
 | 1.6 | How quickly are new endpoints enrolled in EDR? | Manual — describe onboarding process |
 
 ### Domain 2: Multi-Factor Authentication (MFA)
@@ -77,12 +74,12 @@ Ask the user for:
 
 | # | Question | Prelude Data |
 |---|----------|--------------|
-| 2.1 | Is MFA enforced for all user accounts? | `scm_list_users` with filter (MCP) — users without MFA |
+| 2.1 | Is MFA enforced for all user accounts? | `scm_list_users` with filter — users without MFA |
 | 2.2 | What MFA methods are supported? (App, hardware key, SMS) | Manual — describe MFA methods |
 | 2.3 | Is MFA enforced for remote/VPN access? | Manual — describe VPN MFA policy |
-| 2.4 | Is MFA enforced for privileged/admin accounts? | `scm_list_users` with filter (MCP) — filter by admin roles |
-| 2.5 | Is MFA enforced for email access? | `scm_evaluation` (MCP) — identity control policies |
-| 2.6 | What is the MFA enrollment rate? | `scm_list_users` (MCP) — calculate % with MFA |
+| 2.4 | Is MFA enforced for privileged/admin accounts? | `scm_list_users` with filter — filter by admin roles |
+| 2.5 | Is MFA enforced for email access? | `scm_evaluation` — identity control policies |
+| 2.6 | What is the MFA enrollment rate? | `scm_list_users` — calculate % with MFA |
 
 ### Domain 3: Email Security
 
@@ -90,12 +87,12 @@ Ask the user for:
 
 | # | Question | Prelude Data |
 |---|----------|--------------|
-| 3.1 | What email security solution is deployed? | `get_account` (MCP) — M365/Gmail control status |
+| 3.1 | What email security solution is deployed? | `get_account` — M365/Gmail control status |
 | 3.2 | Is DMARC/DKIM/SPF configured? | Manual — check DNS records |
-| 3.3 | Is advanced anti-phishing protection enabled? | `scm_evaluation` (MCP) — email control policies |
+| 3.3 | Is advanced anti-phishing protection enabled? | `scm_evaluation` — email control policies |
 | 3.4 | Are external email banners/warnings in place? | Manual — describe configuration |
-| 3.5 | Is email filtering configured to block malicious attachments? | `scm_evaluation` (MCP) — email policies |
-| 3.6 | How many inboxes are monitored? | `scm_list_inboxes` (MCP) — total count |
+| 3.5 | Is email filtering configured to block malicious attachments? | `scm_evaluation` — email policies |
+| 3.6 | How many inboxes are monitored? | `scm_list_inboxes` — total count |
 
 ### Domain 4: Patch Management & Vulnerability Management
 
@@ -103,11 +100,11 @@ Ask the user for:
 
 | # | Question | Prelude Data |
 |---|----------|--------------|
-| 4.1 | What vulnerability management solution is deployed? | `get_account` (MCP) — Tenable/Qualys/Rapid7 status |
+| 4.1 | What vulnerability management solution is deployed? | `get_account` — Tenable/Qualys/Rapid7 status |
 | 4.2 | How frequently are vulnerability scans performed? | Manual — describe scanning cadence |
 | 4.3 | What is the mean time to patch critical vulnerabilities? | Manual — describe patching SLA |
 | 4.4 | Is there a formal patch management policy? | Manual — provide policy reference |
-| 4.5 | What percentage of endpoints are compliant with patching policy? | `scm_evaluation_summary` (MCP) — patch compliance |
+| 4.5 | What percentage of endpoints are compliant with patching policy? | `scm_evaluation_summary` — patch compliance |
 | 4.6 | Are third-party applications included in patching? | Manual — describe scope |
 
 ### Domain 5: Backup & Recovery
@@ -132,9 +129,9 @@ Ask the user for:
 |---|----------|--------------|
 | 6.1 | Is a Privileged Access Management (PAM) solution deployed? | Manual — describe PAM solution |
 | 6.2 | Are admin accounts separate from daily-use accounts? | Manual — describe separation |
-| 6.3 | Is the principle of least privilege enforced? | `scm_evaluation` (MCP) — identity policies |
+| 6.3 | Is the principle of least privilege enforced? | `scm_evaluation` — identity policies |
 | 6.4 | Are access reviews performed regularly? | Manual — describe review cadence |
-| 6.5 | Are service accounts inventoried and monitored? | `scm_list_users` with filter (MCP) — filter service accounts |
+| 6.5 | Are service accounts inventoried and monitored? | `scm_list_users` with filter — filter service accounts |
 | 6.6 | Is just-in-time (JIT) access used for privileged operations? | Manual — describe JIT setup |
 
 ### Domain 7: Network Segmentation & Security
@@ -145,7 +142,7 @@ Ask the user for:
 |---|----------|--------------|
 | 7.1 | Is network segmentation implemented? | Manual — describe architecture |
 | 7.2 | Are critical systems (e.g., backup servers, domain controllers) isolated? | Manual — describe isolation |
-| 7.3 | Is a next-gen firewall deployed? | `prelude scm network_devices` (CLI only) — network device inventory |
+| 7.3 | Is a next-gen firewall deployed? | Manual — describe firewall solution |
 | 7.4 | Is network traffic monitored for anomalies? | Manual — describe NDR/IDS solution |
 | 7.5 | Are wireless networks segmented from production? | Manual — describe Wi-Fi architecture |
 | 7.6 | Is zero-trust network access (ZTNA) implemented? | Manual — describe ZTNA approach |
@@ -182,10 +179,10 @@ Ask the user for:
 | # | Question | Prelude Data |
 |---|----------|--------------|
 | 10.1 | Are penetration tests performed regularly? | Manual — describe pen test program |
-| 10.2 | Is continuous security validation/testing performed? | `get_activity` with view="protected" (MCP) — protection rates |
-| 10.3 | How many security tests are actively running? | `prelude detect queue` (CLI only) — active test queue |
-| 10.4 | What is the current overall protection rate? | `get_activity` with view="protected" (MCP) — protection percentage |
-| 10.5 | Are test results used to drive remediation? | `get_activity` with view="findings" (MCP) — findings data |
+| 10.2 | Is continuous security validation/testing performed? | `get_activity` with view="protected" — protection rates |
+| 10.3 | How many security tests are actively running? | Manual — describe testing program |
+| 10.4 | What is the current overall protection rate? | `get_activity` with view="protected" — protection percentage |
+| 10.5 | Are test results used to drive remediation? | `get_activity` with view="findings" — findings data |
 | 10.6 | When was the last external penetration test? | Manual — provide date and firm |
 
 ### Domain 11: Logging & Monitoring
@@ -194,7 +191,7 @@ Ask the user for:
 
 | # | Question | Prelude Data |
 |---|----------|--------------|
-| 11.1 | What SIEM/log management solution is used? | `get_account` (MCP) — Splunk/S3 integration status |
+| 11.1 | What SIEM/log management solution is used? | `get_account` — Splunk/S3 integration status |
 | 11.2 | What is the log retention period? | Manual — describe retention policy |
 | 11.3 | Is 24/7 security monitoring in place (SOC/MDR)? | Manual — describe monitoring |
 | 11.4 | Are alerts triaged and investigated within defined SLAs? | Manual — describe SLA |
@@ -207,9 +204,9 @@ Ask the user for:
 | # | Question | Prelude Data |
 |---|----------|--------------|
 | 12.1 | Is sensitive data classified and inventoried? | Manual — describe classification |
-| 12.2 | Is data encrypted at rest? | `scm_evaluation` (MCP) — encryption policies |
+| 12.2 | Is data encrypted at rest? | `scm_evaluation` — encryption policies |
 | 12.3 | Is data encrypted in transit (TLS 1.2+)? | Manual — describe TLS configuration |
-| 12.4 | Is full disk encryption enabled on all endpoints? | `scm_evaluation` (MCP) — FDE policy compliance |
+| 12.4 | Is full disk encryption enabled on all endpoints? | `scm_evaluation` — FDE policy compliance |
 | 12.5 | Is there a data loss prevention (DLP) solution? | Manual — describe DLP |
 | 12.6 | What PII/PHI/PCI data does the organization process? | Manual — describe data types |
 
@@ -220,7 +217,7 @@ Ask the user for:
 1. **Present**: Show the question and explain why insurers care about it
 2. **Prelude check**: If the Prelude Data column lists an MCP tool, offer to pull data:
    - "I can check this from your Prelude data. Want me to query `<tool>`?"
-   - If yes, call the MCP tool (or run the CLI command as fallback), summarize findings, and map to the question
+   - If yes, call the MCP tool, summarize findings, and map to the question
 3. **External data**: Guide the user on how to provide data from other sources
 4. **Collect answer**: Get their response — a description, metric, or "not implemented"
 5. **Score**: Assign a readiness rating and ask the user to confirm
