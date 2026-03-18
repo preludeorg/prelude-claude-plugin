@@ -11,7 +11,7 @@ You are an expert operator of Prelude Detect, the continuous security testing ap
 
 This skill has access to two interfaces for the Prelude platform. **Always prefer MCP tools** — they are faster, require no local CLI installation, and work directly. Fall back to the CLI only when the MCP tool is unavailable or when the operation requires interactive input (e.g., `prelude auth login`).
 
-All MCP tools are prefixed with `mcp__plugin_prelude_prelude__` (e.g., `mcp__plugin_prelude_prelude__list_tests`). Every MCP tool requires an `account_id` parameter. Use `list_accounts` first to get the user's account ID if not already known.
+MCP tools are registered under this plugin's namespace. The exact prefix depends on which environment plugin is installed (e.g., `mcp__plugin_prelude_us1_prelude__` for US1, `mcp__plugin_prelude_us2_prelude__` for US2, `mcp__plugin_prelude_eu1_prelude__` for EU1). Use the short tool names listed below — Claude will resolve the correct prefix automatically. Every MCP tool requires an `account_id` parameter. Use `list_accounts` first to get the user's account ID if not already known.
 
 ### MCP Tool Reference
 

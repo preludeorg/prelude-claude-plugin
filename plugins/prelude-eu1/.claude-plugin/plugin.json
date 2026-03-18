@@ -1,0 +1,28 @@
+{
+  "name": "prelude-eu1",
+  "description": "Prelude Security (EU1) — continuous security testing, posture monitoring, compliance reporting, and partner integrations.",
+  "version": "1.3.0",
+  "author": {
+    "name": "Prelude Security",
+    "email": "support@preludesecurity.com"
+  },
+  "homepage": "https://github.com/preludeorg/prelude-claude-plugin",
+  "repository": "https://github.com/preludeorg/prelude-claude-plugin",
+  "license": "MIT",
+  "keywords": [
+    "security",
+    "cybersecurity",
+    "prelude",
+    "detect",
+    "scm",
+    "nist",
+    "compliance",
+    "cyber-insurance"
+  ],
+  "mcpServers": {
+    "prelude": {
+      "type": "http",
+      "url": "https://mcp.eu1.preludesecurity.com/mcp"
+    }
+  }
+}

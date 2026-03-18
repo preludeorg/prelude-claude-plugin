@@ -11,7 +11,7 @@ You are an expert compliance analyst helping users build a comprehensive NIST Cy
 
 This skill can pull evidence from the Prelude platform via MCP tools (primary) or CLI commands (fallback). **Always prefer MCP tools** — they require no local CLI installation and work directly.
 
-All MCP tools are prefixed with `mcp__plugin_prelude_prelude__`. Every MCP tool requires an `account_id` parameter. Use `list_accounts` first to get the user's account ID if not already known.
+MCP tools are registered under this plugin's namespace. The exact prefix depends on which environment plugin is installed (e.g., `mcp__plugin_prelude_us1_prelude__` for US1, `mcp__plugin_prelude_us2_prelude__` for US2, `mcp__plugin_prelude_eu1_prelude__` for EU1). Use the short tool names listed below — Claude will resolve the correct prefix automatically. Every MCP tool requires an `account_id` parameter. Use `list_accounts` first to get the user's account ID if not already known.
 
 ### Key MCP Tools for NIST Evidence
 

@@ -4,14 +4,24 @@ Official Claude Code plugin for [Prelude Security](https://preludesecurity.com) 
 
 ## Installation
 
+Choose the plugin for your Prelude environment:
+
+| Plugin | Environment | MCP Server |
+|--------|-------------|------------|
+| `prelude-us1` | US1 | `mcp.us1.preludesecurity.com` |
+| `prelude-us2` | US2 | `mcp.us2.preludesecurity.com` |
+| `prelude-eu1` | EU1 | `mcp.eu1.preludesecurity.com` |
+
 ### From the terminal
 
 ```bash
 # Step 1: Add the marketplace
 claude plugin marketplace add preludeorg/prelude-claude-plugin
 
-# Step 2: Install the plugin
-claude plugin install prelude@prelude-claude-plugin
+# Step 2: Install the plugin for your environment
+claude plugin install prelude-us1@prelude-claude-plugin    # US1
+claude plugin install prelude-us2@prelude-claude-plugin    # US2
+claude plugin install prelude-eu1@prelude-claude-plugin    # EU1
 ```
 
 ### From inside Claude Code
@@ -20,10 +30,32 @@ claude plugin install prelude@prelude-claude-plugin
 # Step 1: Add the marketplace
 /plugin marketplace add preludeorg/prelude-claude-plugin
 
-# Step 2: Install the plugin
-/plugin install prelude@prelude-claude-plugin
+# Step 2: Install the plugin for your environment
+/plugin install prelude-us1@prelude-claude-plugin    # US1
+/plugin install prelude-us2@prelude-claude-plugin    # US2
+/plugin install prelude-eu1@prelude-claude-plugin    # EU1
 ```
 
+### Enable auto-updates
+
+By default, third-party marketplace plugins do not auto-update. To enable automatic updates, either:
+
+1. **Via the UI:** Run `/plugin` → select the **Marketplaces** tab → choose the marketplace → **Enable auto-update**
+
+2. **Via settings:** Add to your `.claude/settings.json`:
+   ```json
+   {
+     "extraKnownMarketplaces": {
+       "prelude-claude-plugin": {
+         "source": {
+           "source": "github",
+           "repo": "preludeorg/prelude-claude-plugin"
+         },
+         "autoUpdate": true
+       }
+     }
+   }
+   ```
 
 ## Skills
 
@@ -38,8 +70,8 @@ claude plugin install prelude@prelude-claude-plugin
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/code) installed
-- [Prelude CLI](https://docs.preludesecurity.com) v2.6+ (`pip install prelude-cli`)
 - A Prelude Security account
+- Optional: [Prelude CLI](https://docs.preludesecurity.com) v2.6+ (`pip install prelude-cli`) — the MCP server handles most operations, but some features (file downloads, CSV exports, AI-powered test generation) require the CLI
 
 ## License
 

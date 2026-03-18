@@ -6,10 +6,28 @@
   },
   "plugins": [
     {
-      "name": "prelude",
-      "source": "./plugins/prelude",
-      "description": "Prelude Security platform tools — continuous security testing, posture monitoring, compliance reporting, and partner integrations via the Prelude CLI.",
-      "version": "1.2.0",
+      "name": "prelude-us1",
+      "source": "./plugins/prelude-us1",
+      "description": "Prelude Security (US1) — continuous security testing, posture monitoring, compliance reporting, and partner integrations.",
+      "version": "1.3.0",
+      "author": {
+        "name": "Prelude Security"
+      }
+    },
+    {
+      "name": "prelude-us2",
+      "source": "./plugins/prelude-us2",
+      "description": "Prelude Security (US2) — continuous security testing, posture monitoring, compliance reporting, and partner integrations.",
+      "version": "1.3.0",
+      "author": {
+        "name": "Prelude Security"
+      }
+    },
+    {
+      "name": "prelude-eu1",
+      "source": "./plugins/prelude-eu1",
+      "description": "Prelude Security (EU1) — continuous security testing, posture monitoring, compliance reporting, and partner integrations.",
+      "version": "1.3.0",
       "author": {
         "name": "Prelude Security"
       }
