@@ -18,5 +18,11 @@
     "nist",
     "compliance",
     "cyber-insurance"
-  ]
+  ],
+  "mcpServers": {
+    "prelude": {
+      "type": "http",
+      "url": "https://mcp.us2.preludesecurity.com/mcp"
+    }
+  }
 }
