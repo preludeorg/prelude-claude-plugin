@@ -7,6 +7,33 @@ name: connect
 
 You are an expert at connecting security controls to the Prelude platform via the CLI. You guide users interactively through the process of attaching their security tools (EDR, identity providers, email, asset managers, vulnerability scanners, and more).
 
+## Tools
+
+This skill has access to two interfaces for the Prelude platform. **Always prefer MCP tools** — they are faster, require no local CLI installation, and work directly. Fall back to the CLI only when the MCP tool is unavailable.
+
+All MCP tools are prefixed with `mcp__plugin_prelude_prelude__` (e.g., `mcp__plugin_prelude_prelude__attach_partner`). Every MCP tool requires an `account_id` parameter. Use `list_accounts` first to get the user's account ID if not already known.
+
+### MCP Tool Reference
+
+| Operation | MCP Tool | CLI Equivalent |
+|-----------|----------|---------------|
+| List accounts | `list_accounts` | `prelude iam account` |
+| Get account details | `get_account` | `prelude iam account` |
+| Attach partner | `attach_partner` | `prelude partner attach` |
+| Detach partner | `detach_partner` | `prelude partner detach` |
+
+### MCP `attach_partner` Parameters
+
+| Parameter | Description |
+|-----------|-------------|
+| `account_id` | Required. The account to attach the partner to. |
+| `control_id` | Required. The partner enum name (e.g., `CROWDSTRIKE`, `DEFENDER`, `ENTRA`). |
+| `api` | The partner's API endpoint URL. |
+| `user` | The username or client ID. |
+| `secret` | The authentication credential (API secret/key). Encrypted before storage. |
+| `instance_id` | Provide to update an existing partner instance. |
+| `name` | A display name for this partner instance. |
+
 ## How This Works
 
 The Prelude CLI uses `prelude partner attach <PARTNER>` to connect security tools. Each partner requires specific credentials. You will:
@@ -227,9 +254,9 @@ If they pass an argument (e.g., `/prelude:connect CrowdStrike`), skip to Step 2.
 
 ### Step 2: Verify prerequisites
 
-1. Check CLI is working: `prelude --version`
-2. Check authentication: `prelude iam account`
-3. If either fails, guide them through setup first.
+1. Check MCP connection: call `list_accounts`. If it returns accounts, skip CLI setup — use MCP tools directly.
+2. If MCP is unavailable, check CLI: `prelude --version` and `prelude iam account`
+3. If both fail, guide them through CLI setup first.
 
 ### Step 3: Collect credentials
 
@@ -239,13 +266,23 @@ For the selected partner:
 3. Ask for each credential one at a time — do NOT ask for all at once
 4. Sensitive values (secrets, tokens) — remind users these are passed via CLI flags and stored securely by Prelude
 
-### Step 4: Run the attach command
+### Step 4: Attach the partner
 
-Construct and run the `prelude partner attach` command with the collected credentials.
+**Preferred (MCP):** Call `attach_partner` with the collected credentials:
+- `account_id`: from Step 2
+- `control_id`: partner enum name (e.g., `CROWDSTRIKE`)
+- `api`: partner API URL
+- `user`: client ID or username
+- `secret`: API secret or token
+- `name`: optional friendly name
+
+**Fallback (CLI):** Construct and run the `prelude partner attach` command with the collected credentials.
 
 ### Step 5: Verify connection
 
-After attaching:
+**Preferred (MCP):** Call `get_account` — it should show the new control in the attached partners list.
+
+**Fallback (CLI):**
 ```bash
 prelude iam account  # Should show the new control in the controls list
 ```
@@ -258,11 +295,14 @@ prelude jobs background-jobs    # Monitor sync job status
 
 ## Detaching a Control
 
+**Preferred (MCP):** Call `detach_partner` with `account_id`, `control_id`, and `instance_id`.
+
+**Fallback (CLI):**
 ```bash
 prelude partner detach <PARTNER> -i "<instance_id>"
 ```
 
-Get the instance_id from `prelude iam account`.
+Get the instance_id from `get_account` (MCP) or `prelude iam account` (CLI).
 
 ## Multiple Instances
 

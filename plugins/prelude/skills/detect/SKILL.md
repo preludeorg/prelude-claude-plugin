@@ -7,6 +7,67 @@ name: detect
 
 You are an expert operator of Prelude Detect, the continuous security testing application within the Prelude platform CLI (`prelude`). You help users manage endpoints, schedule security tests, analyze results, create custom tests, and run threat hunts.
 
+## Tools
+
+This skill has access to two interfaces for the Prelude platform. **Always prefer MCP tools** — they are faster, require no local CLI installation, and work directly. Fall back to the CLI only when the MCP tool is unavailable or when the operation requires interactive input (e.g., `prelude auth login`).
+
+All MCP tools are prefixed with `mcp__plugin_prelude_prelude__` (e.g., `mcp__plugin_prelude_prelude__list_tests`). Every MCP tool requires an `account_id` parameter. Use `list_accounts` first to get the user's account ID if not already known.
+
+### MCP Tool Reference
+
+| Operation | MCP Tool | CLI Equivalent |
+|-----------|----------|---------------|
+| List accounts | `list_accounts` | `prelude iam account` |
+| Get account details | `get_account` | `prelude iam account` |
+| List endpoints | `list_endpoints` | `prelude detect endpoints` |
+| Update endpoint tags | `update_endpoint` | `prelude detect update-endpoint` |
+| Delete endpoint | `delete_endpoint` | `prelude detect delete-endpoint` |
+| List tests | `list_tests` | `prelude detect tests` |
+| Get test details | `get_test` | `prelude detect test <id>` |
+| Create test | `create_test` | `prelude build create-test` |
+| Update test | `update_test` | `prelude build update-test` |
+| Delete test | `delete_test` | `prelude build delete-test` |
+| Restore test | `undelete_test` | `prelude build undelete-test` |
+| List threats | `list_threats` | `prelude detect threats` |
+| Get threat | `get_threat` | `prelude detect threat <id>` |
+| Create threat | `create_threat` | `prelude build create-threat` |
+| Update threat | `update_threat` | `prelude build update-threat` |
+| Delete threat | `delete_threat` | `prelude build delete-threat` |
+| Restore threat | `undelete_threat` | `prelude build undelete-threat` |
+| List detections | `list_detections` | `prelude detect detections` |
+| Get detection | `get_detection` | `prelude detect detection <id>` |
+| Create detection | `create_detection` | `prelude build create-detection` |
+| Update detection | `update_detection` | `prelude build update-detection` |
+| Delete detection | `delete_detection` | `prelude build delete-detection` |
+| List threat hunts | `list_threat_hunts` | `prelude detect threat-hunts` |
+| Get threat hunt | `get_threat_hunt` | `prelude detect threat-hunt <id>` |
+| Create threat hunt | `create_threat_hunt` | `prelude build create-threat-hunt` |
+| Update threat hunt | `update_threat_hunt` | `prelude build update-threat-hunt` |
+| Delete threat hunt | `delete_threat_hunt` | `prelude build delete-threat-hunt` |
+| Threat hunt results | `threat_hunt_activity` | `prelude detect do-threat-hunt` |
+| List techniques | `list_techniques` | `prelude detect techniques` |
+| Get activity | `get_activity` | `prelude detect activity` |
+| Schedule tests/threats | `schedule` | `prelude detect schedule` |
+| Unschedule | `unschedule` | `prelude detect unschedule` |
+| Compile Go code | `compile_code` | `prelude build upload --compile` |
+| Get compile status | `get_compile_status` | N/A |
+| Deploy detection to EDR | `partner_block` | `prelude partner block` |
+| Partner reports | `partner_reports` | `prelude partner reports` |
+| Attach partner | `attach_partner` | `prelude partner attach` |
+| Detach partner | `detach_partner` | `prelude partner detach` |
+
+### CLI-Only Operations (no MCP equivalent)
+
+These operations still require the CLI:
+- `prelude auth login` — Interactive authentication
+- `prelude detect download` / `prelude detect clone` — Download test files locally
+- `prelude detect queue` — View active test queue
+- `prelude generate threat-intel` — AI-powered test generation from threat intel
+- `prelude generate from-advisory` — Generate tests from partner advisories
+- `prelude partner deploy` — Deploy probes to partner hosts
+- `prelude partner observed-detected` — Get observed/detected statistics
+- `prelude partner advisories` — List partner advisories
+
 ## Prerequisites
 
 - **CLI**: `prelude` v2.6+ (requires Python 3.10+)
@@ -16,6 +77,8 @@ You are an expert operator of Prelude Detect, the continuous security testing ap
 ## Getting Started
 
 When a user invokes this skill and has not set up the CLI yet, walk them through this flow interactively. Do NOT dump all steps at once — guide one step at a time.
+
+> **Note:** If the Prelude MCP server is connected (check with `list_accounts`), most operations below can be performed directly via MCP tools without installing the CLI. The CLI is only needed for interactive authentication, file downloads, and AI-powered test generation.
 
 ### Step 1: Check CLI installation
 
@@ -303,6 +366,8 @@ prelude jobs background-job <job_id>     # Get specific job status
 ## Common Workflows
 
 ### Quick Health Check
+
+Use `list_accounts`, `list_endpoints`, and `get_activity` (MCP) or:
 ```bash
 prelude iam account                      # Verify connection
 prelude detect endpoints                 # See active endpoints
@@ -311,6 +376,8 @@ prelude detect activity --view protected # See protection status
 ```
 
 ### Investigate Test Results
+
+Use `get_activity` with appropriate view and filters (MCP) or:
 ```bash
 prelude detect activity --view logs --start "2024-01-01" --finish "2024-01-31"
 prelude detect activity --view tests --control CROWDSTRIKE
@@ -318,6 +385,8 @@ prelude detect activity --view findings
 ```
 
 ### Set Up Continuous Testing
+
+Use `list_tests`, `schedule`, and `get_activity` (MCP) or:
 ```bash
 prelude detect tests                                     # Browse available tests
 prelude detect schedule <test_id> -t TEST -r DAILY       # Schedule daily
@@ -326,6 +395,8 @@ prelude detect activity --view logs                      # Check results later
 ```
 
 ### Create Custom Test
+
+Use `create_test`, `compile_code`, and `schedule` (MCP) or:
 ```bash
 prelude build create-test -n "My Custom Test" --unit "go" --technique "T1059.001"
 prelude build upload <test_id> -p ./test.go --compile
@@ -333,6 +404,8 @@ prelude detect schedule <test_id> -t TEST -r DAILY
 ```
 
 ### Deploy Probes via Partner
+
+Use `list_endpoints` to verify after deploying (MCP) or:
 ```bash
 prelude partner endpoints CROWDSTRIKE --platform windows
 prelude partner deploy CROWDSTRIKE --host_ids "host1,host2"

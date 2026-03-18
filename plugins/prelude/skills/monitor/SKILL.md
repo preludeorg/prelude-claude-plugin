@@ -7,6 +7,64 @@ name: monitor
 
 You are an expert operator of Prelude SCM (Security Control Monitor), the posture monitoring application within the Prelude platform CLI (`prelude`). You help users query their security inventory, evaluate control policies, manage exceptions, generate compliance reports, and monitor partner integrations.
 
+## Tools
+
+This skill has access to two interfaces for the Prelude platform. **Always prefer MCP tools** — they are faster, require no local CLI installation, and work directly. Fall back to the CLI only when the MCP tool is unavailable or when the operation requires interactive input (e.g., `prelude auth login`).
+
+All MCP tools are prefixed with `mcp__plugin_prelude_prelude__` (e.g., `mcp__plugin_prelude_prelude__scm_list_endpoints`). Every MCP tool requires an `account_id` parameter. Use `list_accounts` first to get the user's account ID if not already known.
+
+### MCP Tool Reference
+
+| Operation | MCP Tool | CLI Equivalent |
+|-----------|----------|---------------|
+| List accounts | `list_accounts` | `prelude iam account` |
+| Get account details | `get_account` | `prelude iam account` |
+| List SCM endpoints | `scm_list_endpoints` | `prelude scm endpoints` |
+| List SCM users | `scm_list_users` | `prelude scm users` |
+| List SCM inboxes | `scm_list_inboxes` | `prelude scm inboxes` |
+| Evaluation summary | `scm_evaluation_summary` | `prelude scm evaluation-summary` |
+| Policy evaluation | `scm_evaluation` | `prelude scm evaluation` |
+| Technique summary | `scm_technique_summary` | `prelude scm technique-summary` |
+| Update evaluation | `scm_update_evaluation` | `prelude scm sync` |
+| List object exceptions | `scm_list_object_exceptions` | `prelude scm exception object list` |
+| Create object exception | `scm_create_object_exception` | `prelude scm exception object create` |
+| Update object exception | `scm_update_object_exception` | `prelude scm exception object update` |
+| Delete object exception | `scm_delete_object_exception` | `prelude scm exception object delete` |
+| List policy exceptions | `scm_list_policy_exceptions` | `prelude scm exception policy list` |
+| Create policy exception | `scm_create_policy_exception` | `prelude scm exception policy create` |
+| Update policy exception | `scm_update_policy_exception` | `prelude scm exception policy update` |
+| Delete policy exception | `scm_delete_policy_exception` | `prelude scm exception policy delete` |
+| List reports | `scm_list_reports` | `prelude scm report list` |
+| Get report | `scm_get_report` | `prelude scm report get` |
+| Create/update report | `scm_put_report` | `prelude scm report put` |
+| Delete report | `scm_delete_report` | `prelude scm report delete` |
+| Get chart data | `scm_get_chart_data` | `prelude scm report chart-data` |
+| List evaluation history | `scm_list_history` | `prelude scm history` |
+| List SCM threats | `scm_list_threats` | `prelude scm threat list` |
+| Get SCM threat | `scm_get_threat` | `prelude scm threat get` |
+| Create SCM threat | `scm_create_threat` | `prelude scm threat create` |
+| Update SCM threat | `scm_update_threat` | `prelude scm threat update` |
+| Delete SCM threat | `scm_delete_threat` | `prelude scm threat delete` |
+| List notifications | `scm_list_notifications` | `prelude scm notification list` |
+| Create notification | `scm_create_notification` | `prelude scm notification upsert` |
+| Update notification | `scm_update_notification` | `prelude scm notification upsert` |
+| Delete notification | `scm_delete_notification` | `prelude scm notification delete` |
+| List background jobs | `scm_list_background_jobs` | `prelude jobs background-jobs` |
+| List partner groups | `scm_list_partner_groups` | `prelude scm group list` |
+| Update partner groups | `scm_update_partner_groups` | `prelude scm group sync` |
+| Attach partner | `attach_partner` | `prelude partner attach` |
+| Detach partner | `detach_partner` | `prelude partner detach` |
+
+### CLI-Only Operations (no MCP equivalent)
+
+These operations still require the CLI:
+- `prelude auth login` — Interactive authentication
+- `prelude scm export` — Export data to CSV
+- `prelude scm network_devices` — List network devices
+- `prelude scm notations` — List notations
+- `prelude scm threat-intel` — AI-powered threat intel processing
+- `prelude partner endpoints` — List partner endpoints directly
+
 ## Prerequisites
 
 - **CLI**: `prelude` v2.6+ (requires Python 3.10+)
@@ -16,6 +74,8 @@ You are an expert operator of Prelude SCM (Security Control Monitor), the postur
 ## Getting Started
 
 When a user invokes this skill and has not set up the CLI yet, walk them through this flow interactively. Do NOT dump all steps at once — guide one step at a time.
+
+> **Note:** If the Prelude MCP server is connected (check with `list_accounts`), most operations below can be performed directly via MCP tools without installing the CLI. The CLI is only needed for interactive authentication, CSV exports, and AI-powered threat intel processing.
 
 ### Step 1: Check CLI installation
 
@@ -283,6 +343,9 @@ Job types: UPDATE_SCM, DEPLOY_PROBE, OBSERVED_DETECTED, PRELUDE_ENDPOINT_SYNC, E
 ## Common Workflows
 
 ### Check Security Posture
+
+Use `scm_evaluation_summary`, `scm_list_endpoints`, and `scm_list_users` (MCP) or:
+
 ```bash
 prelude scm evaluation-summary                    # Overall posture
 prelude scm endpoints --top 10                    # Sample endpoints
@@ -290,6 +353,9 @@ prelude scm users --odata_filter "missing_mfa eq true"  # Users without MFA
 ```
 
 ### Investigate Endpoint Posture
+
+Use `scm_list_endpoints` with filter and `scm_evaluation` (MCP) or:
+
 ```bash
 prelude scm endpoints --odata_filter "hostname eq 'target-host'"
 prelude scm evaluation CROWDSTRIKE -i "instance_id"
@@ -297,6 +363,9 @@ prelude scm evaluation DEFENDER -i "instance_id"
 ```
 
 ### Review Policy Compliance
+
+Use `scm_evaluation_summary`, `scm_technique_summary`, and `scm_list_policy_exceptions` (MCP) or:
+
 ```bash
 prelude scm evaluation-summary
 prelude scm technique-summary --techniques "T1059,T1053"
@@ -304,6 +373,9 @@ prelude scm exception policy list  # Check existing exceptions
 ```
 
 ### Export Data for Analysis
+
+CSV export requires the CLI:
+
 ```bash
 prelude scm export ENDPOINT
 prelude scm export USER
@@ -311,6 +383,9 @@ prelude scm export INBOX
 ```
 
 ### Monitor Partner Integrations
+
+Use `get_account`, `scm_evaluation_summary`, and `scm_list_background_jobs` (MCP) or:
+
 ```bash
 prelude iam account                        # See connected controls
 prelude scm evaluation-summary             # See sync status
